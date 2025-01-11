@@ -1,7 +1,31 @@
 Mycelium EI Proprietary License Agreement
 =========================================
-1. **Ownership**: The code is owned exclusively by Michael Crowe.
-2. **Restrictions**: Users cannot modify, distribute, sublicense, or resell the software.
-3. **Authorized Usage**: Use is limited to the terms agreed upon in a license agreement.
-4. **Liability**: The software is provided "as is" without warranties.
-5. **Termination**: Unauthorized use results in termination of rights.
+
+This License Agreement governs the use, distribution, and modification of the software ("Mycelium EI System"). By using this software, you agree to the terms outlined below.
+
+1. **Ownership**:
+   - The Mycelium EI System, including all code, documentation, and associated intellectual property, is owned exclusively by Michael Crowe.
+
+2. **License Grant**:
+   - You are granted a non-exclusive, non-transferable, revocable license to use the software for its intended purpose, as specified in the documentation.
+   - This license is restricted to authorized users who have obtained explicit permission from the copyright owner.
+
+3. **Restrictions**:
+   - You may not modify, distribute, sublicense, or resell the software without prior written consent from Michael Crowe.
+   - Reverse engineering, decompiling, or attempting to derive the source code is strictly prohibited.
+
+4. **Authorized Usage**:
+   - Use of the software is limited to the scope outlined in your licensing agreement with Michael Crowe.
+   - Unauthorized use or distribution will result in the immediate termination of this license and may result in legal action.
+
+5. **Liability**:
+   - The software is provided "as is" without warranties of any kind, express or implied. Michael Crowe is not liable for any damages arising from the use of the software.
+
+6. **Termination**:
+   - This license will terminate automatically if you breach any of its terms.
+   - Upon termination, you must cease all use of the software and destroy all copies in your possession.
+
+7. **Contact**:
+   - For licensing inquiries or support, contact: licensing@mycelium-ei.com
+
+Copyright © 2025, Michael Crowe. All rights reserved.
