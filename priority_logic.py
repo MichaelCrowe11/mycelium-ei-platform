@@ -1,90 +1,41 @@
 # priority_logic.py
-import json
+# Copyright 2025 Mycelium EI. All Rights Reserved.
 
-def prioritize_strains(site_data, database):
+"""
+Priority Logic Algorithm for Mycelium EI
+This script determines the optimal fungal strains based on environmental parameters.
+"""
+
+def prioritize_strains(environment_data, database):
     """
-    Prioritize fungal strains based on site-specific ecological needs.
+    Prioritizes fungal strains for ecological restoration or pollutant decomposition.
 
     Parameters:
-        site_data (dict): Contains site-specific parameters like temperature, pH, pollutants, etc.
-        database (list): A list of fungal strains with their metadata.
+        environment_data (dict): Environmental conditions, e.g., temperature, pH, pollutants.
+        database (list): List of fungal strains with attributes.
 
     Returns:
-        list: A ranked list of fungal strains suitable for the site.
+        list: Prioritized strains with reasons for selection.
     """
-    priorities = []
-
+    prioritized = []
     for strain in database:
         score = 0
+        if "temperature" in strain["optimal_conditions"]:
+            temp_range = strain["optimal_conditions"]["temperature"].split("-")
+            if float(temp_range[0]) <= environment_data["temperature"] <= float(temp_range[1]):
+                score += 1
+        
+        if "pH" in strain["optimal_conditions"]:
+            pH_range = strain["optimal_conditions"]["pH"].split("-")
+            if float(pH_range[0]) <= environment_data["pH"] <= float(pH_range[1]):
+                score += 1
 
-        # Match temperature range
-        temp_range = strain["optimal_conditions"]["temperature"].split("-")
-        min_temp, max_temp = float(temp_range[0].replace("°C", "")), float(temp_range[1].replace("°C", ""))
-        if min_temp <= site_data["temperature"] <= max_temp:
-            score += 2  # Higher weight for matching temperature
+        if strain["category"] in environment_data["goals"]:
+            score += 2
 
-        # Match pH range
-        if "pH_range" in strain["optimal_conditions"]:
-            min_pH, max_pH = strain["optimal_conditions"]["pH_range"]
-            if min_pH <= site_data["pH"] <= max_pH:
-                score += 2
+        if score > 0:
+            prioritized.append({"strain": strain["name"], "score": score})
 
-        # Match pollutant breakdown capabilities
-        for pollutant in site_data.get("pollutants", []):
-            if pollutant in strain.get("applications", []):
-                score += 3  # Very high priority for pollutant remediation
-
-        # Match biodiversity enhancement
-        if strain["category"] in site_data.get("ecosystem_needs", []):
-            score += 1
-
-        # Include decomposition priority
-        if strain["name"].startswith(("PO", "G", "T")):  # Decomposer strains
-            score += 1
-
-        priorities.append({"strain": strain["name"], "score": score})
-
-    # Sort by score (highest to lowest)
-    priorities = sorted(priorities, key=lambda x: x["score"], reverse=True)
-
-    return priorities
-
-
-if __name__ == "__main__":
-    # Example site data
-    site_data = {
-        "temperature": 22,
-        "pH": 6.5,
-        "pollutants": ["lead", "arsenic"],
-        "ecosystem_needs": ["Decomposer", "Polypore"]
-    }
-
-    # Example database
-    database = [
-        {
-            "name": "Pleurotus ostreatus (PO12)",
-            "category": "Decomposer",
-            "optimal_conditions": {"temperature": "15-25°C", "pH_range": [5.5, 7.5]},
-            "applications": ["Forest fuel decomposition", "Pollutant breakdown"],
-        },
-        {
-            "name": "Ganoderma lucidum (GL1)",
-            "category": "Polypore",
-            "optimal_conditions": {"temperature": "20-30°C", "pH_range": [6.0, 8.0]},
-            "applications": ["Carbon sequestration", "Medicinal uses"],
-        },
-        {
-            "name": "Turkey Tail (TT1)",
-            "category": "Decomposer",
-            "optimal_conditions": {"temperature": "18-28°C", "pH_range": [5.0, 7.0]},
-            "applications": ["Pollutant breakdown", "Medicinal uses"],
-        },
-    ]
-
-    # Get prioritized strains
-    prioritized_strains = prioritize_strains(site_data, database)
-
-    # Display results
-    print("Prioritized Strains:")
-    for strain in prioritized_strains:
-        print(f"Strain: {strain['strain']}, Priority Score: {strain['score']}")
+    # Sort by score (descending) for prioritization
+    prioritized.sort(key=lambda x: x["score"], reverse=True)
+    return prioritized
