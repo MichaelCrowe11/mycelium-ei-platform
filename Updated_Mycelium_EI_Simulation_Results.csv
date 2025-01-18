@@ -1,0 +1,6 @@
+location,zone,forest_fuel_risk,recommended_strain
+Site A,warm,225.0,Pleurotus Ostreatus PO5
+Site B,moderate,105.0,Pleurotus Ostreatus PO5
+Site C,cold,380.0,PO2
+Site D,warm,144.0,Pleurotus Ostreatus PO5
+Site E,cold,264.0,Pleurotus Ostreatus PO5
