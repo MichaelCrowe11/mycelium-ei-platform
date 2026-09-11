@@ -1,115 +1,60 @@
-# Mycelium EI Platform
+# mycelium-ei-platform
 
-Overview
+Mycelium EI is a handful of Python scripts that score fungal strains against temperature and pH readings and check a license key before a simulation stub runs.
 
-The Mycelium EI Platform is a proprietary environmental intelligence solution combining AI, autonomous systems, and mycelium-based applications to monitor, predict, and mitigate environmental challenges in real time. It offers innovative tools for ecological restoration, carbon sequestration, pollutant breakdown, and sustainable development.
+## Status
 
-Features
+archived
 
-Core Functionality
-	•	Fungal Database: Houses a comprehensive collection of fungal strains with taxonomy, optimal growth conditions, and ecological applications.
-	•	Simulation Framework: Capable of simulating ecological scenarios across up to 1,000,000 sites.
-	•	Real-Time Analysis: Provides actionable insights with AI-driven predictions and visualization tools.
-	•	Weather Forecast Integration: Models weather patterns to optimize strain deployment and ecosystem management.
+Development stopped on 2025-01-18 (last content commit 0a6dee4; a merge commit followed on 2025-03-02). The code is kept for reference. Nothing in the repository runs end to end from a command it provides. Tried on 2026-09-10:
 
-Licensing System
+- `pytest` stops during collection with two errors: `tests/test_licensing.py` imports `cryptography`, which `requirements.txt` does not list, and `test_openai.py` calls the pre-1.0 OpenAI interface, which raises `APIRemovedInV1` under the `openai>=1.0.0` that `requirements.txt` requires.
+- `python -c "import dashboard"` fails with `No module named 'dash'`; `dash` and `plotly` are not in `requirements.txt`.
+- `run_simulation.py`, `app/`, `data/fungal_database.json` and `visualizations/`, all named in the previous README, do not exist.
+- The homepage `mycelium-ei.io`, the API host `api.mycelium-ei.io` and the contact domain `mycelium-ei.com` have no DNS records.
 
-The platform supports multiple licensing tiers with customizable features and restrictions:
-	1.	Commercial License:
-	•	Full database access, unlimited simulations, advanced visualization tools.
-	•	Suitable for enterprise clients requiring scalability and integration.
-	2.	Research License:
-	•	Access to limited simulations and preconfigured visualization tools.
-	•	Restricted to academic and non-commercial use.
-	3.	Nonprofit License:
-	•	Basic database access and limited visualization tools.
-	•	Available for conservation projects with mandatory data sharing.
-	4.	Open-Source Components:
-	•	Access to limited datasets and algorithms.
-	•	Requires attribution for derivative works.
+## Install and first run
 
-Security Features
-	•	Environment Variable Encryption: Protects API keys and sensitive data.
-	•	Role-Based Access Control: Restricts features based on license tier.
-	•	Data Integrity Checks: Ensures accurate and secure simulation results.
+Not maintained. No supported install path.
 
-How to Use
+What I did run on 2026-09-10 with Python 3.13.14 (uv for the virtual environment):
 
-Prerequisites
-	•	Python 3.9+
-	•	Required Python libraries: see requirements.txt
+```
+git clone https://github.com/MichaelCrowe11/mycelium-ei-platform
+cd mycelium-ei-platform
+uv venv --python 3.13 .venv
+VIRTUAL_ENV=.venv uv pip install -r requirements.txt
+.venv/bin/python -m pytest -q
+```
 
-Installation
-	1.	Clone the repository:
+`pytest` output ends with:
 
-git clone https://github.com/your-repository/mycelium-ei.git
-cd mycelium-ei
+```
+ERROR test_openai.py - openai.lib._old_api.APIRemovedInV1:
+ERROR tests/test_licensing.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+2 errors in 1.42s
+```
 
+The one function that works when imported is `prioritize_strains` in `priority_logic.py`. Called with a two-strain list and `{"temperature": 20, "pH": 6.5, "goals": ["restoration"]}` it returned `[{'strain': 'Pleurotus ostreatus', 'score': 4}]`.
 
-	2.	Create a virtual environment and activate it:
+Not run: `dashboard.py` (missing dependencies), `core/simulation.py` (needs a license file that nothing in the repository creates), `test_openai.py` (needs a live OpenAI key and fails at import anyway).
 
-python -m venv env
-source env/bin/activate # On Windows: env\Scripts\activate
+## What runs today
 
+Nothing is maintained. `priority_logic.prioritize_strains` and `strain_prioritizer.StrainPrioritizer` are plain scoring loops over a list of dictionaries and can be imported.
 
-	3.	Install dependencies:
+## Limits
 
-pip install -r requirements.txt
+- There is no fungal database, no weather model, no REST API, no drone control and no simulation in this repository. `API.md` describes endpoints that were never implemented here. `core/simulation.py` prints one line after a license check.
+- `Updated_Mycelium_EI_Simulation_Results.csv` has five rows. No code in the repository produces it.
+- The licensing tiers, role-based access control and encryption described in the previous README are not in the code. `core/licensing.py` wraps a JSON file with Fernet and nothing else. `config/license_keys.json` is `{}`.
+- `LICENSE_SECRET_KEY` falls back to the placeholder `your_generated_key_here` in `config/settings.py`.
+- A `.env` file is committed at the repository root. Do not reuse anything in it.
+- `test_openai.py` and `clipboard*.txt` are scratch files for calling OpenAI, not part of any product.
 
+## License and contact
 
+Proprietary. See `LICENSE`: use only with written permission from the owner; no modification, distribution or resale. The contact addresses in `LICENSE` and the previous README point at domains that no longer resolve.
 
-Licensing Example
-
-Add and validate licenses using the following code:
-
-from priority_logic.licensing_logic import validate_license
-
-user_license = "commercial"
-license_features = validate_license(user_license)
-
-print("License Features:", license_features["features"])
-print("License Restrictions:", license_features["restrictions"])
-
-Running Simulations
-	1.	Set up environment variables in .env.
-	2.	Run simulations using pre-built scripts:
-
-python run_simulation.py
-
-
-	3.	View results in the visualizations/ directory or export outputs to data/simulation_results/.
-
-Contributing
-
-We welcome contributions to improve the Mycelium EI Platform! Please follow these steps:
-	1.	Fork the repository and create a new branch.
-	2.	Commit changes and push them to your fork.
-	3.	Submit a pull request for review.
-
-File Structure
-
-mycelium-ei/
-├── app/
-│   ├── __init__.py
-│   ├── api.py
-│   ├── models.py
-│   ├── utils.py
-├── data/
-│   ├── fungal_database.json
-│   ├── simulation_results/
-├── visualizations/
-├── priority_logic/
-│   ├── licensing_logic.py
-├── .env
-├── .gitignore
-├── README.md
-├── requirements.txt
-├── run_simulation.py
-
-License
-
-The Mycelium EI Platform is proprietary software. Unauthorized use, reproduction, or distribution is prohibited. Licensing inquiries can be directed to contact@mycelium-ei.com.
-
-Contact
-
-For questions or support, please reach out to support@mycelium-ei.com.
+Contact: michael@crowelogic.com
